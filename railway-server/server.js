@@ -29,6 +29,14 @@ function validKey(key) { return /^[a-f0-9]{64}$/.test(key || ""); }
 function validId(id) { return /^[a-zA-Z0-9_-]{8,80}$/.test(id || ""); }
 function roomDir(key) { return path.join(DATA_DIR, key); }
 function indexPath(key) { return path.join(roomDir(key), "media.json"); }
+function clipPath(key) { return path.join(roomDir(key), "clip.json"); }
+function readClip(key) {
+  try { return JSON.parse(fs.readFileSync(clipPath(key), "utf8")); } catch { return clips.get(key) || null; }
+}
+function writeClip(key, value) {
+  fs.mkdirSync(roomDir(key), { recursive: true });
+  fs.writeFileSync(clipPath(key), JSON.stringify(value));
+}
 function readMedia(key) {
   try { return JSON.parse(fs.readFileSync(indexPath(key), "utf8")); } catch { return []; }
 }
