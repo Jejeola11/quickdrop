@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>QuickDrop — Phone to PC Text</title>
+  <meta name="description" content="Move encrypted text privately between your phone and computer." />
+  <style>
+    :root{--bg:#090c16;--card:#111827;--ink:#fff;--muted:#94a3b8;--line:rgba(255,255,255,.1);--lime:#c7ff4d;--deep:#0a1020}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:var(--bg);color:var(--ink);font-family:Inter,Arial,sans-serif}button,input,textarea{font:inherit}.screen{min-height:100vh;padding:24px;display:grid;place-items:center}.card{width:min(100%,540px);background:var(--card);border:1px solid var(--line);border-radius:30px;padding:34px;box-shadow:0 28px 70px rgba(0,0,0,.38)}.brand{display:flex;align-items:center;gap:12px;font-size:20px;font-weight:800;margin-bottom:42px}.logo{width:44px;height:44px;display:grid;place-items:center;border-radius:16px;background:var(--lime);color:var(--deep);font-size:23px}.eyebrow{color:var(--lime);font-size:13px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;margin:0 0 10px}h1{font-size:clamp(30px,6vw,42px);line-height:1.07;letter-spacing:-.04em;margin:0}.intro{color:#cbd5e1;font-size:16px;line-height:1.75;margin:18px 0 30px}label{display:block;color:#e2e8f0;font-size:14px;font-weight:650;margin-bottom:9px}.keyrow{display:flex;gap:9px}.keyrow input{min-width:0;flex:1}.field{width:100%;border:1px solid rgba(255,255,255,.15);background:var(--deep);color:white;border-radius:13px;padding:15px 16px;outline:none}.field:focus{border-color:var(--lime)}.field::placeholder{color:#64748b}.iconbtn{border:1px solid rgba(255,255,255,.15);background:transparent;color:var(--lime);border-radius:13px;padding:0 15px;cursor:pointer}.primary{width:100%;margin-top:12px;border:0;border-radius:13px;background:var(--lime);color:#08101c;font-weight:800;padding:16px;cursor:pointer}.primary:disabled{opacity:.4;cursor:not-allowed}.hint{text-align:center;color:var(--muted);font-size:13px;line-height:1.6;margin:17px 0 0}.workspace{width:min(100%,900px);min-height:min(760px,calc(100vh - 32px));background:var(--card);border:1px solid var(--line);border-radius:28px;display:flex;flex-direction:column;box-shadow:0 28px 70px rgba(0,0,0,.38)}header{padding:18px 24px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}.mini{display:flex;align-items:center;gap:11px;font-weight:800}.mini .logo{width:40px;height:40px;border-radius:13px;font-size:19px}.sub{display:block;color:var(--muted);font-size:12px;font-weight:400;margin-top:3px}.linkbtn{background:none;border:0;color:#cbd5e1;font-size:14px;cursor:pointer}.editor{padding:24px;display:flex;flex:1;flex-direction:column}.topline{display:flex;justify-content:space-between;gap:14px;align-items:center;margin-bottom:14px}.title{font-size:14px;font-weight:750}.timestamp{color:var(--muted);font-size:12px;margin-top:5px}.status{font-size:12px;font-weight:750;color:#d9ff8a;background:rgba(199,255,77,.12);border-radius:99px;padding:7px 11px}.status.error{color:#fca5a5;background:rgba(248,113,113,.12)}textarea{flex:1;min-height:420px;resize:none;border:1px solid var(--line);border-radius:17px;background:var(--deep);color:white;padding:18px;font-size:16px;line-height:1.7;outline:none}.bottom{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-top:15px}.actions{display:flex;gap:9px}.keyinfo{color:var(--muted);font-size:13px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.show{border:0;background:none;color:var(--lime);cursor:pointer}.copy,.save{border:0;border-radius:12px;font-weight:800;padding:12px 18px;cursor:pointer}.copy{background:white;color:var(--deep)}.save{background:var(--lime);color:var(--deep)}.save:disabled{opacity:.45;cursor:not-allowed}.hidden{display:none!important}@media(max-width:600px){.screen{padding:16px}.card{padding:25px 20px;border-radius:24px}.workspace{min-height:calc(100vh - 32px)}header,.editor{padding:18px}.bottom{align-items:stretch;flex-direction:column}.actions{display:grid;grid-template-columns:1fr 1fr}.copy,.save{width:100%}textarea{min-height:360px}}
+  </style>
+</head>
+<body>
+  <main class="screen">
+    <section id="gate" class="card">
+      <div class="brand"><span class="logo">✦</span>QuickDrop</div>
+      <p class="eyebrow">Phone ↔ computer text</p>
+      <h1>One private space for anything you need to move.</h1>
+      <p class="intro">Paste on your phone. Open the same space on your PC. Copy. No accounts, no WhatsApp forwarding.</p>
+      <label for="spaceKey">Your private space key</label>
+      <div class="keyrow"><input id="spaceKey" class="field" placeholder="e.g. olive-nova-482" autocomplete="off" autocapitalize="none" /><button id="generate" class="iconbtn" aria-label="Generate a key">↻</button></div>
+      <button id="open" class="primary" disabled>🔑 &nbsp;Open this space</button>
+      <p class="hint">Use exactly the same key on both devices. Your text is encrypted before it leaves the browser.</p>
+    </section>
+    <section id="workspace" class="workspace hidden">
+      <header><div class="mini"><span class="logo">✦</span><span>QuickDrop<span class="sub">Private encrypted space</span></span></div><button id="change" class="linkbtn">Change space</button></header>
+      <div class="editor"><div class="topline"><div><div class="title">Shared text</div><div id="updated" class="timestamp">Your first note will appear here.</div></div><span id="status" class="status">Synced</span></div><textarea id="text" placeholder="Paste or type anything here…"></textarea><div class="bottom"><div class="keyinfo">🔒 Key: <span id="keyDisplay">••••••••••••</span> <button id="show" class="show">Show</button></div><div class="actions"><button id="save" class="save" disabled>Save to space</button><button id="copy" class="copy">▣ &nbsp;Copy text</button></div></div></div>
+    </section>
+  </main>
+  <script>
+    const $=id=>document.getElementById(id), enc=new TextEncoder(), dec=new TextDecoder();
+    let secret='', polling, current='', dirty=false;
+    const words=['amber','bloom','cocoa','dawn','ember','fable','glow','honey','iris','jewel','lunar','maple','nova','olive','pearl','quiet','ripple','satin','tulip','velvet'];
+    const b64=bytes=>{let out='';for(let i=0;i<bytes.length;i+=32768)out+=String.fromCharCode(...bytes.subarray(i,i+32768));return btoa(out)};
+    const unb64=value=>Uint8Array.from(atob(value),c=>c.charCodeAt(0));
+    async function digest(value){return new Uint8Array(await crypto.subtle.digest('SHA-256',enc.encode(value)))}
+    async function roomHash(){return [...await digest('quickdrop-room:'+secret)].map(b=>b.toString(16).padStart(2,'0')).join('')}
+    async function cryptoKey(){return crypto.subtle.importKey('raw',await digest('quickdrop-encrypt:'+secret),{name:'AES-GCM'},false,['encrypt','decrypt'])}
+    async function encrypt(value){const iv=crypto.getRandomValues(new Uint8Array(12)),data=new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM',iv},await cryptoKey(),enc.encode(value)));return b64(new Uint8Array([...iv,...data]))}
+    async function decrypt(value){const bytes=unb64(value);return dec.decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:bytes.slice(0,12)},await cryptoKey(),bytes.slice(12)))}
+    function state(label,error=false){$('status').textContent=label;$('status').classList.toggle('error',error)}
+    function stamp(ms){$('updated').textContent=ms?'Last saved '+new Date(ms).toLocaleString([], {dateStyle:'medium',timeStyle:'short'}):'Your first note will appear here.'}
+    async function load(quiet=false){if(quiet&&dirty)return;try{if(!quiet)state('Loading…');const res=await fetch('/api/clip?key='+await roomHash(),{cache:'no-store'});if(!res.ok)throw 0;const data=await res.json();if(data.ciphertext){const next=await decrypt(data.ciphertext);if(next!==current){current=next;$('text').value=next}}dirty=false;$('save').disabled=true;stamp(data.updatedAt);state('Synced')}catch(e){state('Couldn\'t sync — retrying',true)}}
+    async function save(){try{state('Saving…');$('save').disabled=true;const updatedAt=Date.now(),res=await fetch('/api/clip',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({key:await roomHash(),ciphertext:await encrypt(current),updatedAt})});if(!res.ok)throw 0;dirty=false;stamp(updatedAt);state('Saved — open this key on your PC')}catch(e){$('save').disabled=false;state('Couldn\'t save — tap again',true)}}
+    $('spaceKey').addEventListener('input',e=>$('open').disabled=!e.target.value.trim());
+    $('spaceKey').addEventListener('keydown',e=>{if(e.key==='Enter')$('open').click()});
+    $('generate').onclick=()=>{const p=()=>words[Math.floor(Math.random()*words.length)];$('spaceKey').value=`${p()}-${p()}-${Math.floor(100+Math.random()*900)}`;$('open').disabled=false};
+    $('open').onclick=async()=>{secret=$('spaceKey').value.trim();if(!secret)return;$('gate').classList.add('hidden');$('workspace').classList.remove('hidden');await load();polling=setInterval(()=>load(true),15000)};
+    $('text').addEventListener('input',e=>{current=e.target.value;dirty=true;$('save').disabled=false;state('Not saved yet')});
+    $('save').onclick=save;
+    $('copy').onclick=async()=>{await navigator.clipboard.writeText(current);$('copy').textContent='✓  Copied';setTimeout(()=>$('copy').textContent='▣  Copy text',1400)};
+    $('show').onclick=()=>{const visible=$('show').textContent==='Hide';$('keyDisplay').textContent=visible?'••••••••••••':secret;$('show').textContent=visible?'Show':'Hide'};
+    $('change').onclick=()=>{clearInterval(polling);secret='';current='';$('text').value='';$('workspace').classList.add('hidden');$('gate').classList.remove('hidden')};
+  </script>
+</body>
+</html>
