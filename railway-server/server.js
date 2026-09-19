@@ -52,4 +52,4 @@ http.createServer((req, res) => {
 
   res.setHeader("allow", "GET, POST, OPTIONS");
   return send(res, 405, { error: "Method not allowed" }, origin);
-}).listen(process.env.PORT || 3000, () => console.log("QuickDrop sync service ready"));
+}).listen(3000, "0.0.0.0", () => console.log("QuickDrop sync service ready on port 3000"));
