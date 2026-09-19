@@ -2,7 +2,11 @@
   "name": "quickdrop-sync",
   "private": true,
   "version": "1.0.0",
+  "engines": { "node": "22.x" },
   "scripts": {
     "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
   }
 }
