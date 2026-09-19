@@ -18,7 +18,7 @@ function send(res, status, payload, origin) {
   res.end(JSON.stringify(payload));
 }
 
-http.createServer((req, res) => {
+function handler(req, res) {
   const origin = req.headers.origin || "";
   if (req.method === "OPTIONS") { res.writeHead(204, headers(origin)); return res.end(); }
 
@@ -52,4 +52,11 @@ http.createServer((req, res) => {
 
   res.setHeader("allow", "GET, POST, OPTIONS");
   return send(res, 405, { error: "Method not allowed" }, origin);
-}).listen(3000, "0.0.0.0", () => console.log("QuickDrop sync service ready on port 3000"));
+}
+
+// Railway's health checks use its assigned PORT; the public QuickDrop domain is
+// configured for 3000. Serving both makes the sync endpoint robust.
+const ports = [...new Set([3000, Number(process.env.PORT)].filter(Number.isInteger))];
+for (const port of ports) {
+  http.createServer(handler).listen(port, "0.0.0.0", () => console.log(`QuickDrop sync ready on port ${port}`));
+}
