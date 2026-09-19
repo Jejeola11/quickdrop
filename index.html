@@ -27,6 +27,7 @@
     </section>
   </main>
   <script>
+    const API='https://quickdrop-sync-production.up.railway.app';
     const $=id=>document.getElementById(id), enc=new TextEncoder(), dec=new TextDecoder();
     let secret='', polling, current='', dirty=false;
     const words=['amber','bloom','cocoa','dawn','ember','fable','glow','honey','iris','jewel','lunar','maple','nova','olive','pearl','quiet','ripple','satin','tulip','velvet'];
@@ -39,8 +40,8 @@
     async function decrypt(value){const bytes=unb64(value);return dec.decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:bytes.slice(0,12)},await cryptoKey(),bytes.slice(12)))}
     function state(label,error=false){$('status').textContent=label;$('status').classList.toggle('error',error)}
     function stamp(ms){$('updated').textContent=ms?'Last saved '+new Date(ms).toLocaleString([], {dateStyle:'medium',timeStyle:'short'}):'Your first note will appear here.'}
-    async function load(quiet=false){if(quiet&&dirty)return;try{if(!quiet)state('Loading…');const res=await fetch('/api/clip?key='+await roomHash(),{cache:'no-store'});if(!res.ok)throw 0;const data=await res.json();if(data.ciphertext){const next=await decrypt(data.ciphertext);if(next!==current){current=next;$('text').value=next}}dirty=false;$('save').disabled=true;stamp(data.updatedAt);state('Synced')}catch(e){state('Couldn\'t sync — retrying',true)}}
-    async function save(){try{state('Saving…');$('save').disabled=true;const updatedAt=Date.now(),res=await fetch('/api/clip',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({key:await roomHash(),ciphertext:await encrypt(current),updatedAt})});if(!res.ok)throw 0;dirty=false;stamp(updatedAt);state('Saved — open this key on your PC')}catch(e){$('save').disabled=false;state('Couldn\'t save — tap again',true)}}
+    async function load(quiet=false){if(quiet&&dirty)return;try{if(!quiet)state('Loading…');const res=await fetch(API+'/clip?key='+await roomHash(),{cache:'no-store'});if(!res.ok)throw 0;const data=await res.json();if(data.ciphertext){const next=await decrypt(data.ciphertext);if(next!==current){current=next;$('text').value=next}}dirty=false;$('save').disabled=true;stamp(data.updatedAt);state('Synced')}catch(e){state('Couldn\'t sync — retrying',true)}}
+    async function save(){try{state('Saving…');$('save').disabled=true;const updatedAt=Date.now(),res=await fetch(API+'/clip',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({key:await roomHash(),ciphertext:await encrypt(current),updatedAt})});if(!res.ok)throw 0;dirty=false;stamp(updatedAt);state('Saved — open this key on your PC')}catch(e){$('save').disabled=false;state('Couldn\'t save — tap again',true)}}
     $('spaceKey').addEventListener('input',e=>$('open').disabled=!e.target.value.trim());
     $('spaceKey').addEventListener('keydown',e=>{if(e.key==='Enter')$('open').click()});
     $('generate').onclick=()=>{const p=()=>words[Math.floor(Math.random()*words.length)];$('spaceKey').value=`${p()}-${p()}-${Math.floor(100+Math.random()*900)}`;$('open').disabled=false};
