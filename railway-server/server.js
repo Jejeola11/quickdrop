@@ -100,8 +100,10 @@ function handler(req, res) {
       req.on("end", () => {
         try {
           const { ciphertext, updatedAt } = JSON.parse(body);
-          if (typeof ciphertext !== "string" || ciphertext.length > 3_500_000 || !Number.isSafeInteger(updatedAt)) throw new Error();
-          clips.set(key, { ciphertext, updatedAt });
+          if (typeof ciphertext !== "string" || ciphertext.length > MAX_TEXT_CIPHERTEXT || !Number.isSafeInteger(updatedAt)) throw new Error();
+          const value = { ciphertext, updatedAt };
+          clips.set(key, value);
+          try { writeClip(key, value); } catch (error) { console.error("QuickDrop disk backup failed:", error.message); }
           send(res, 200, { ok: true }, origin);
         } catch { send(res, 400, { error: "Invalid request" }, origin); }
       });
