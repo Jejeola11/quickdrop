@@ -92,18 +92,22 @@ function handler(req, res) {
   if (url.pathname === "/health") return send(res, 200, { ok: true }, origin);
 
   if (url.pathname === "/clip") {
-    if (!validKey(key)) return send(res, 400, { error: "Invalid key" }, origin);
-    if (req.method === "GET") return send(res, 200, readClip(key) || { ciphertext: null, updatedAt: null }, origin);
+    if (req.method === "GET") {
+      if (!validKey(key)) return send(res, 400, { error: "Invalid key" }, origin);
+      return send(res, 200, readClip(key) || { ciphertext: null, updatedAt: null }, origin);
+    }
     if (req.method === "POST") {
       let body = "";
       req.on("data", chunk => { body += chunk; if (body.length > MAX_TEXT_CIPHERTEXT + 50_000) req.destroy(); });
       req.on("end", () => {
         try {
-          const { ciphertext, updatedAt } = JSON.parse(body);
-          if (typeof ciphertext !== "string" || ciphertext.length > MAX_TEXT_CIPHERTEXT || !Number.isSafeInteger(updatedAt)) throw new Error();
+          const payload = JSON.parse(body);
+          const roomKey = key || payload.key || "";
+          const { ciphertext, updatedAt } = payload;
+          if (!validKey(roomKey) || typeof ciphertext !== "string" || ciphertext.length > MAX_TEXT_CIPHERTEXT || !Number.isSafeInteger(updatedAt)) throw new Error();
           const value = { ciphertext, updatedAt };
-          clips.set(key, value);
-          try { writeClip(key, value); } catch (error) { console.error("QuickDrop disk backup failed:", error.message); }
+          clips.set(roomKey, value);
+          try { writeClip(roomKey, value); } catch (error) { console.error("QuickDrop disk backup failed:", error.message); }
           send(res, 200, { ok: true }, origin);
         } catch { send(res, 400, { error: "Invalid request" }, origin); }
       });
