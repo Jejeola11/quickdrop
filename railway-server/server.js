@@ -5,6 +5,7 @@ const crypto = require("crypto");
 
 const DATA_DIR = process.env.QUICKDROP_DATA_DIR || "/data";
 const MAX_MEDIA_BYTES = 30 * 1024 * 1024;
+const MAX_TEXT_CIPHERTEXT = 20 * 1024 * 1024;
 const clips = new Map();
 fs.mkdirSync(DATA_DIR, { recursive: true });
 
@@ -92,10 +93,10 @@ function handler(req, res) {
 
   if (url.pathname === "/clip") {
     if (!validKey(key)) return send(res, 400, { error: "Invalid key" }, origin);
-    if (req.method === "GET") return send(res, 200, clips.get(key) || { ciphertext: null, updatedAt: null }, origin);
+    if (req.method === "GET") return send(res, 200, readClip(key) || { ciphertext: null, updatedAt: null }, origin);
     if (req.method === "POST") {
       let body = "";
-      req.on("data", chunk => { body += chunk; if (body.length > 3_800_000) req.destroy(); });
+      req.on("data", chunk => { body += chunk; if (body.length > MAX_TEXT_CIPHERTEXT + 50_000) req.destroy(); });
       req.on("end", () => {
         try {
           const { ciphertext, updatedAt } = JSON.parse(body);
